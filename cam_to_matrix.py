@@ -21,7 +21,6 @@ def convert_coords(x, y):
   panel_x =  7 - y % 8
   panel_y = 7 - x % 8
   
-  #ret = (x / 8, y)
   new_x = panel_index % 3 * 8 + panel_x 
   new_y = panel_index / 3 * 8 + panel_y
   ret = (new_x, new_y)
@@ -50,7 +49,7 @@ class App(object):
         image = frame.array
         
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        tmp_img = cv2.resize(gray, (HEIGHT, WIDTH))
+        tmp_img = gray#cv2.resize(gray, (HEIGHT, WIDTH))
         thresh_val, tmp_img = cv2.threshold(tmp_img, 60, 1, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
         #print tmp_img      
         cv2.imshow("pupu", tmp_img)
