@@ -49,18 +49,20 @@ class App(object):
         image = frame.array
         
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        tmp_img = gray#cv2.resize(gray, (HEIGHT, WIDTH))
-        thresh_val, tmp_img = cv2.threshold(tmp_img, 60, 1, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+        tmp_img = gray
+        thresh_val, tmp_img = cv2.threshold(tmp_img, 60, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
         #print tmp_img      
         cv2.imshow("pupu", tmp_img)
         cv2.waitKey(10)
+        tmp_img = cv2.resize(tmp_img, (WIDTH, HEIGHT))
 
         self.led_matrix.clear()
 
         for y in range(0, HEIGHT):
          for x in range(0, WIDTH):
             matrix_x, matrix_y = convert_coords(x, y)
-            self.led_matrix.plot(matrix_x, matrix_y, tmp_img[x, y])
+            val = 0 if tmp_img[y, x] == 0 else 1
+            self.led_matrix.plot(matrix_x, matrix_y, val)
        
         #self.led_matrix.sendframe()
 
