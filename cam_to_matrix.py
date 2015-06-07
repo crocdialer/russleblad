@@ -51,9 +51,8 @@ class App(object):
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         tmp_img = gray
         thresh_val, tmp_img = cv2.threshold(tmp_img, 60, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
-        #print tmp_img      
-        cv2.imshow("pupu", tmp_img)
-        cv2.waitKey(10)
+        #cv2.imshow("pupu", tmp_img)
+        #cv2.waitKey(10)
         tmp_img = cv2.resize(tmp_img, (WIDTH, HEIGHT))
 
         self.led_matrix.clear()
