@@ -9,7 +9,7 @@ def encodeStr(s):
 
 class HT1632C(object):
 	def __init__(self, num_panels, rotation):
-		libPath = os.path.abspath(os.path.dirname(inspect.getfile(inspect.currentframe())) + "/libht1632c-py.so")
+		libPath = os.path.abspath(os.path.dirname(inspect.getfile(inspect.currentframe())) + "/./libht1632c-py.so")
 		self.lib = cdll.LoadLibrary(libPath)
 		
 		self.lib.ht1632c_init.argtypes = [c_int, c_int]
