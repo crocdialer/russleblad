@@ -13,28 +13,25 @@ WIDTH = 24
 HEIGHT = 16
 COLOR = 1
 
-MATRIX_LOOKUP = {0 : 5, 1 : 4, 2 : 3, 3 : 2, 4 : 1, 5 : 0}
+CAM_IMG_SIZE = (640, 480)
+MATRIX_BORDER = (100, 50)
 
 def convert_coords(x, y):
   panel_index = x / 8 + 3 * (y / 8)
-  panel_index = MATRIX_LOOKUP[panel_index]
+  panel_index = 5 - panel_index 
   panel_x =  7 - y % 8
   panel_y = 7 - x % 8
-  
   new_x = panel_index % 3 * 8 + panel_x 
   new_y = panel_index / 3 * 8 + panel_y
-  ret = (new_x, new_y)
-  #return (x, y)
-  #print("{} -> {}".format((x, y), ret))
-  return ret
+  return (new_x, new_y)
 
 class App(object):
   def __init__(self):
     self.led_matrix = ht1632c.HT1632C(1, 0)
     self.cam = picamera.PiCamera()
-    self.cam.resolution = (1280, 720)
+    self.cam.resolution = CAM_IMG_SIZE 
     self.cam.framerate = 15
-    self.raw_capture = PiRGBArray(self.cam, size=(1280, 720))
+    self.raw_capture = PiRGBArray(self.cam, size=CAM_IMG_SIZE)
     self.running = False
 
   def run(self):
@@ -51,9 +48,15 @@ class App(object):
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         tmp_img = gray
         thresh_val, tmp_img = cv2.threshold(tmp_img, 60, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
-        #cv2.imshow("pupu", tmp_img)
-        #cv2.waitKey(10)
-        tmp_img = cv2.resize(tmp_img, (WIDTH, HEIGHT))
+
+        # post processing for LED-matrix image
+        tmp_img = cv2.blur(tmp_img, (3, 3))      
+  
+        # show debug view
+        cv2.imshow("pupu", tmp_img)
+        cv2.waitKey(1)
+
+        tmp_img = cv2.resize(tmp_img[MATRIX_BORDER[1]:-MATRIX_BORDER[1], MATRIX_BORDER[0]:-MATRIX_BORDER[0]], (WIDTH, HEIGHT))
 
         self.led_matrix.clear()
 
@@ -85,8 +88,10 @@ class App(object):
 
       except KeyboardInterrupt:
         print("\nkeyboard interrupt")
+        self.cam.close()
         self.led_matrix.close()
         self.running = False
+        break
 
 ##########################################################################
 
